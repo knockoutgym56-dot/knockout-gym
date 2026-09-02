@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Geist:wght@100..900&display=swap');
+
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: auto; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: inherit; text-decoration: none; }
+img, video { display: block; max-width: 100%; }
+button { font-family: var(--font-body); cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: var(--font-body); }
+ul, ol { list-style: none; }
+
+/* ── CSS Variables ──────────────────────────────────────────────────────────── */
+:root {
+  --bg:           #060606;
+  --surface:      #111111;
+  --surface-2:    #181818;
+  --border:       rgba(255,255,255,0.07);
+  --border-hover: rgba(255,255,255,0.14);
+
+  --red:          #c8102e;
+  --red-dim:      rgba(200,16,46,0.14);
+  --red-glow:     rgba(200,16,46,0.32);
+
+  --gold:         #c9a84c;
+  --gold-dim:     rgba(201,168,76,0.14);
+
+  --text:         #f0ece4;
+  --text-muted:   rgba(240,236,228,0.44);
+  --text-faint:   rgba(240,236,228,0.18);
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'Geist', sans-serif;
+
+  --vh:           100vh;
+  --nav-h:        72px;
+
+  --ease-out:     cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+
+/* ── Selection ───────────────────────────────────────────────────────────────── */
+::selection { background: var(--red); color: #fff; }
+
+/* ── Typography helpers ──────────────────────────────────────────────────────── */
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; line-height: 1; }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 200;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.section-label.red { color: var(--red); }
+
+/* ── Container ───────────────────────────────────────────────────────────────── */
+.container {
+  width: calc(100% - 48px);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .container { width: calc(100% - 32px); }
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.btn-red {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: var(--red);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+}
+.btn-red:hover { opacity: 0.85; }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 31px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 2px;
+  border: 1px solid var(--border-hover);
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: var(--red); color: var(--red); }
+
+/* ── Tag / Badge ────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ── Divider ────────────────────────────────────────────────────────────────── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Red ambient glow (reusable) ────────────────────────────────────────────── */
+.red-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--red-glow);
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Page wrapper ───────────────────────────────────────────────────────────── */
+.page { min-height: 100vh; padding-top: var(--nav-h); }
+
+/* ── Scroll progress bar (mobile) ───────────────────────────────────────────── */
+#scroll-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--red);
+  z-index: 9999;
+  pointer-events: none;
+  transition: width 0.05s linear;
+  display: none;
+}
+@media (max-width: 1024px) { #scroll-bar { display: block; } }
+
+/* ── Cursor override (hide default on desktop) ──────────────────────────────── */
+@media (pointer: fine) and (min-width: 1025px) { * { cursor: none !important; } }

@@ -1,0 +1,19 @@
+.hl-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 1.1em;
+  line-height: 1.1em;
+  vertical-align: bottom;
+}
+
+.hl-inner {
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hl-wrap:hover .hl-inner {
+  transform: translateY(-100%);
+}
+
+.hl-clone { color: var(--red); }
