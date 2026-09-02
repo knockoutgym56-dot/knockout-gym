@@ -1,28 +1,21 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import defaultContent from '../data/defaultContent'
 import { getContent, setContent } from '../lib/db'
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  ContentProvider — reads site content from Supabase database.
-//  Visitors everywhere see the same latest content.
-//  Owner panel writes here → updates instantly everywhere.
-// ─────────────────────────────────────────────────────────────────────────────
+import { useLoading } from './LoadingProvider'
 
 const ContentContext = createContext(null)
 
 export function ContentProvider({ children }) {
   const [content, setLocalContent] = useState(null)
-  const [loading, setLoading]      = useState(true)
+  const { markContentReady } = useLoading()
 
   useEffect(() => {
     async function load() {
       try {
         const saved = await getContent()
         if (saved) {
-          // Deep merge — ensures new fields added to defaultContent always exist
           setLocalContent(deepMerge(defaultContent, saved))
         } else {
-          // First ever visit — seed the database with default content
           await setContent(defaultContent)
           setLocalContent(defaultContent)
         }
@@ -30,17 +23,17 @@ export function ContentProvider({ children }) {
         console.error('Content load error:', err)
         setLocalContent(defaultContent)
       } finally {
-        setLoading(false)
+        // Signal the KO Loader that content is ready — it will now finish
+        markContentReady()
       }
     }
     load()
   }, [])
 
-  // Update one section → saves to cloud → all devices see the change
   const updateSection = async (sectionKey, newData) => {
     const updated = { ...content, [sectionKey]: newData }
-    setLocalContent(updated)           // instant UI update
-    const ok = await setContent(updated) // persist to Supabase
+    setLocalContent(updated)
+    const ok = await setContent(updated)
     if (!ok) console.warn('Failed to save to database')
     return ok
   }
@@ -50,19 +43,8 @@ export function ContentProvider({ children }) {
     await setContent(defaultContent)
   }
 
-  if (loading) {
-    return (
-      <div style={{
-        position:'fixed', inset:0, background:'#060606', zIndex:99999,
-        display:'flex', alignItems:'center', justifyContent:'center',
-        fontFamily:'sans-serif', color:'#c8102e',
-        fontSize:'12px', letterSpacing:'6px', textTransform:'uppercase'
-      }}>
-        Loading…
-      </div>
-    )
-  }
-
+  // No loading screen here — the KO Loader in Loader.jsx handles it
+  // Render children even if content is null; pages guard with `if (!content) return null`
   return (
     <ContentContext.Provider value={{ content, updateSection, resetToDefaults }}>
       {children}
@@ -76,7 +58,6 @@ export function useContent() {
   return ctx
 }
 
-// Deep merge: use saved values where they exist, fill missing keys from defaults
 function deepMerge(defaults, saved) {
   const result = { ...defaults }
   for (const key of Object.keys(saved)) {
@@ -88,4 +69,5 @@ function deepMerge(defaults, saved) {
   }
   return result
 }
+
 
