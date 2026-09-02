@@ -30,10 +30,11 @@ function PublicLayout({ children }) {
 
 export default function App() {
   return (
-    // No basename needed for Vercel — site is at root /
     <BrowserRouter>
-      <ContentProvider>
-        <LoadingProvider>
+      {/* LoadingProvider MUST wrap ContentProvider because
+          ContentProvider now calls markContentReady() from useLoading() */}
+      <LoadingProvider>
+        <ContentProvider>
           <Cursor />
           <Loader />
           <Routes>
@@ -42,12 +43,13 @@ export default function App() {
             <Route path="/results"  element={<PublicLayout><Results /></PublicLayout>} />
             <Route path="/gallery"  element={<PublicLayout><GalleryPage /></PublicLayout>} />
             <Route path="/contact"  element={<PublicLayout><ContactPage /></PublicLayout>} />
-            {/* SECRET OWNER PANEL — no navbar/footer */}
+            {/* SECRET OWNER PANEL — no navbar/footer, bypasses Loader entirely */}
             <Route path="/kgadmin-9x2" element={<OwnerPanel />} />
             <Route path="*"         element={<PublicLayout><Home /></PublicLayout>} />
           </Routes>
-        </LoadingProvider>
-      </ContentProvider>
+        </ContentProvider>
+      </LoadingProvider>
     </BrowserRouter>
   )
 }
+
